@@ -21,9 +21,6 @@ import { IUser } from '../domain/interfaces/user.interface';
 //Schema
 import { User } from '../domain/model/user.schema';
 
-
-
-
 @Injectable()
 export class UsersRepository {
   constructor(
@@ -56,7 +53,7 @@ export class UsersRepository {
     }
 
     //Sort
-    const sortDefault = 'createdAt';
+    const sortDefault = 'accountData.createdAt';
     let sort = `-${sortDefault}`;
     if (query && query.sortBy && query.sortDirection) {
       query.sortDirection === SortDirection.DESC
