@@ -44,6 +44,8 @@ export class UsersRepository {
       });
     }
 
+    console.log(whereCondition);
+
     //Filter
     let filter = this.userModel.find();
     let totalCount = (await this.userModel.find(filter).exec()).length;
@@ -57,14 +59,14 @@ export class UsersRepository {
     let sort = `-${sortDefault}`;
     if (query && query.sortBy && query.sortDirection) {
       query.sortDirection === SortDirection.DESC
-        ? (sort = `-${query.sortBy}`)
-        : (sort = `${query.sortBy}`);
+        ? (sort = `-accountData.${query.sortBy}`)
+        : (sort = `accountData.${query.sortBy}`);
     } else if (query && query.sortDirection) {
       query.sortDirection === SortDirection.DESC
         ? (sort = `-${sortDefault}`)
         : (sort = sortDefault);
     } else if (query && query.sortBy) {
-      sort = `-${query.sortBy}`;
+      sort = `-accountData.${query.sortBy}`;
     }
 
     //Pagination
