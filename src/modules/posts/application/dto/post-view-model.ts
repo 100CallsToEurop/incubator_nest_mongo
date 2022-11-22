@@ -8,7 +8,6 @@ export class PostViewModel {
   blogId: string;
   blogName: string;
   createdAt: string;
-  extendedLikesInfo: ExtendedLikesInfoViewModel;
 };
 
 

@@ -15,7 +15,6 @@ import { PostEntity } from '../domain/entity/post.entity';
 
 //QueryParams
 import { PaginatorInputModel } from '../../../modules/paginator/models/query-params.model';
-import { LikeInputModel } from '../api/models';
 import { IPost, LikeStatus } from '../domain/interfaces/post.interface';
 
 @Injectable()
@@ -24,31 +23,8 @@ export class PostsService {
 
 
 
-  buildResponsePost(post: IPost, userId?: string): PostViewModel {
-    let myStatus;
-
-    const index_current_user = post.extendedLikesInfo.newestLikes.findIndex(
-      (c) => c.userId === userId,
-    );
-
-    userId
-      ? index_current_user !== -1
-        ? (myStatus = post.extendedLikesInfo.newestLikes.find(
-            (s) => s.userId === userId,
-          ).status)
-        : (myStatus = LikeStatus.NONE)
-      : (myStatus = LikeStatus.NONE);
-
-    let newestLikes = [];
-
-    const likes = post.extendedLikesInfo.newestLikes.filter(
-      (l) => l.status === LikeStatus.LIKE,
-    );
-
-    if (likes.length > 3) {
-      newestLikes = likes.slice(-3).reverse();
-    } else newestLikes = likes.reverse();
-
+  buildResponsePost(post: IPost): PostViewModel {
+  
     return {
       id: post._id.toString(),
       title: post.title,
@@ -56,19 +32,7 @@ export class PostsService {
       content: post.content,
       blogId: post.blogId,
       blogName: post.blogName,
-      createdAt: post.createdAt.toISOString(),
-      extendedLikesInfo: {
-        likesCount: post.extendedLikesInfo.likesCount,
-        dislikesCount: post.extendedLikesInfo.dislikesCount,
-        myStatus: myStatus,
-        newestLikes: newestLikes.map((n) => {
-          return {
-            addedAt: n.addedAt.toISOString(),
-            userId: n.userId,
-            login: n.login,
-          };
-        }),
-      },
+      createdAt: post.createdAt.toISOString()
     };
   }
 
@@ -108,13 +72,12 @@ export class PostsService {
 
   async getPostById(
     postId: Types.ObjectId,
-    userId?: string,
   ): Promise<PostViewModel> {
     const post = await this.postsRepository.getPostById(postId);
     if (!post) {
       throw new NotFoundException();
     }
-    return this.buildResponsePost(post, userId);
+    return this.buildResponsePost(post);
   }
 
   async deletePostById(id: Types.ObjectId): Promise<void> {
